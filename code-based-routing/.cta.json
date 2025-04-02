@@ -1,0 +1,13 @@
+{
+  "framework": "react",
+  "projectName": "code-based-routing",
+  "typescript": true,
+  "tailwind": true,
+  "packageManager": "npm",
+  "toolchain": "none",
+  "mode": "code-router",
+  "git": true,
+  "variableValues": {},
+  "version": 1,
+  "existingAddOns": []
+}
