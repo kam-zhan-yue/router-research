@@ -1,0 +1,6 @@
+version: 0.0.2
+patterns:
+  - name: disabled_pattern
+    level: none # This pattern is disabled
+    body: |
+      `something` => `somewhere`
