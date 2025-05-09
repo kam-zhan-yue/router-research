@@ -1,12 +1,13 @@
 ---
 tags: [optional, tags, here]
+level: 'info'
 ---
 # Remove console.log
 
 Remove console.log in production code.
 
 ```grit
-`console.log($_)` => .
+`console.log($_)` => ``
 ```
 
 ## Test case one
@@ -23,5 +24,4 @@ This is often used to explain the context of the test case, or to explain a conv
 
 ```typescript
 console.error("keep this");
-
 ```

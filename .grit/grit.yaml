@@ -1,6 +1,4 @@
-version: 0.0.2
+version: 0.1.1
 patterns:
-  - name: disabled_pattern
-    level: none # This pattern is disabled
-    body: |
-      `something` => `somewhere`
+  - name: github.com/getgrit/stdlib#no_console_log
+  - name: github.com/getgrit/stdlib#react_to_hooks
