@@ -1,6 +1,6 @@
-import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet } from '@tanstack/react-router'
 
-export const Route = createFileRoute("/tasks_/$taskId")({
+export const Route = createFileRoute('/tasks/$taskId/_taskDetail')({
   component: RouteComponent,
 });
 

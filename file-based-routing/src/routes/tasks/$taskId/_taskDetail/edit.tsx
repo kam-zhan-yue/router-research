@@ -1,7 +1,7 @@
-import Modal from "@/components/modal";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import Modal from '@/components/modal';
+import { createFileRoute, Link } from '@tanstack/react-router'
 
-export const Route = createFileRoute("/tasks_/$taskId/edit")({
+export const Route = createFileRoute('/tasks/$taskId/_taskDetail/edit')({
   component: RouteComponent,
 });
 
