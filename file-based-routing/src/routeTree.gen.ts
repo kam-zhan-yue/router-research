@@ -14,23 +14,35 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as PropertiesImport } from './routes/properties'
+import { Route as LayoutImport } from './routes/layout'
 import { Route as DashboardImport } from './routes/dashboard'
 import { Route as IndexImport } from './routes/index'
+import { Route as TestPathlessOneImport } from './routes/test/_pathlessOne'
 import { Route as TasksTaskListImport } from './routes/tasks/_taskList'
+import { Route as LayoutCreateImport } from './routes/layout/create'
 import { Route as FilesCreateImport } from './routes/files/create'
 import { Route as FilesSplatImport } from './routes/files/$'
 import { Route as TasksTaskListIndexImport } from './routes/tasks/_taskList/index'
+import { Route as TestPathlessOnePathlessTwoImport } from './routes/test/_pathlessOne/_pathlessTwo'
 import { Route as TasksTaskListCreateImport } from './routes/tasks/_taskList/create'
 import { Route as TasksTaskIdTaskDetailImport } from './routes/tasks/$taskId/_taskDetail'
+import { Route as TestPathlessOnePathlessTwoIndexImport } from './routes/test/_pathlessOne/_pathlessTwo/index'
 import { Route as TasksTaskIdTaskDetailIndexImport } from './routes/tasks/$taskId/_taskDetail/index'
 import { Route as TasksTaskIdTaskDetailEditImport } from './routes/tasks/$taskId/_taskDetail/edit'
 
 // Create Virtual Routes
 
+const TestImport = createFileRoute('/test')()
 const TasksImport = createFileRoute('/tasks')()
 const TasksTaskIdImport = createFileRoute('/tasks/$taskId')()
 
 // Create/Update Routes
+
+const TestRoute = TestImport.update({
+  id: '/test',
+  path: '/test',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const TasksRoute = TasksImport.update({
   id: '/tasks',
@@ -41,6 +53,12 @@ const TasksRoute = TasksImport.update({
 const PropertiesRoute = PropertiesImport.update({
   id: '/properties',
   path: '/properties',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const LayoutRoute = LayoutImport.update({
+  id: '/layout',
+  path: '/layout',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -62,9 +80,20 @@ const TasksTaskIdRoute = TasksTaskIdImport.update({
   getParentRoute: () => TasksRoute,
 } as any)
 
+const TestPathlessOneRoute = TestPathlessOneImport.update({
+  id: '/_pathlessOne',
+  getParentRoute: () => TestRoute,
+} as any)
+
 const TasksTaskListRoute = TasksTaskListImport.update({
   id: '/_taskList',
   getParentRoute: () => TasksRoute,
+} as any)
+
+const LayoutCreateRoute = LayoutCreateImport.update({
+  id: '/create',
+  path: '/create',
+  getParentRoute: () => LayoutRoute,
 } as any)
 
 const FilesCreateRoute = FilesCreateImport.update({
@@ -85,6 +114,13 @@ const TasksTaskListIndexRoute = TasksTaskListIndexImport.update({
   getParentRoute: () => TasksTaskListRoute,
 } as any)
 
+const TestPathlessOnePathlessTwoRoute = TestPathlessOnePathlessTwoImport.update(
+  {
+    id: '/_pathlessTwo',
+    getParentRoute: () => TestPathlessOneRoute,
+  } as any,
+)
+
 const TasksTaskListCreateRoute = TasksTaskListCreateImport.update({
   id: '/create',
   path: '/create',
@@ -95,6 +131,13 @@ const TasksTaskIdTaskDetailRoute = TasksTaskIdTaskDetailImport.update({
   id: '/_taskDetail',
   getParentRoute: () => TasksTaskIdRoute,
 } as any)
+
+const TestPathlessOnePathlessTwoIndexRoute =
+  TestPathlessOnePathlessTwoIndexImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => TestPathlessOnePathlessTwoRoute,
+  } as any)
 
 const TasksTaskIdTaskDetailIndexRoute = TasksTaskIdTaskDetailIndexImport.update(
   {
@@ -128,6 +171,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardImport
       parentRoute: typeof rootRoute
     }
+    '/layout': {
+      id: '/layout'
+      path: '/layout'
+      fullPath: '/layout'
+      preLoaderRoute: typeof LayoutImport
+      parentRoute: typeof rootRoute
+    }
     '/properties': {
       id: '/properties'
       path: '/properties'
@@ -149,6 +199,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FilesCreateImport
       parentRoute: typeof rootRoute
     }
+    '/layout/create': {
+      id: '/layout/create'
+      path: '/create'
+      fullPath: '/layout/create'
+      preLoaderRoute: typeof LayoutCreateImport
+      parentRoute: typeof LayoutImport
+    }
     '/tasks': {
       id: '/tasks'
       path: '/tasks'
@@ -162,6 +219,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/tasks'
       preLoaderRoute: typeof TasksTaskListImport
       parentRoute: typeof TasksRoute
+    }
+    '/test': {
+      id: '/test'
+      path: '/test'
+      fullPath: '/test'
+      preLoaderRoute: typeof TestImport
+      parentRoute: typeof rootRoute
+    }
+    '/test/_pathlessOne': {
+      id: '/test/_pathlessOne'
+      path: '/test'
+      fullPath: '/test'
+      preLoaderRoute: typeof TestPathlessOneImport
+      parentRoute: typeof TestRoute
     }
     '/tasks/$taskId': {
       id: '/tasks/$taskId'
@@ -184,6 +255,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TasksTaskListCreateImport
       parentRoute: typeof TasksTaskListImport
     }
+    '/test/_pathlessOne/_pathlessTwo': {
+      id: '/test/_pathlessOne/_pathlessTwo'
+      path: ''
+      fullPath: '/test'
+      preLoaderRoute: typeof TestPathlessOnePathlessTwoImport
+      parentRoute: typeof TestPathlessOneImport
+    }
     '/tasks/_taskList/': {
       id: '/tasks/_taskList/'
       path: '/'
@@ -205,10 +283,28 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TasksTaskIdTaskDetailIndexImport
       parentRoute: typeof TasksTaskIdTaskDetailImport
     }
+    '/test/_pathlessOne/_pathlessTwo/': {
+      id: '/test/_pathlessOne/_pathlessTwo/'
+      path: '/'
+      fullPath: '/test/'
+      preLoaderRoute: typeof TestPathlessOnePathlessTwoIndexImport
+      parentRoute: typeof TestPathlessOnePathlessTwoImport
+    }
   }
 }
 
 // Create and export the route tree
+
+interface LayoutRouteChildren {
+  LayoutCreateRoute: typeof LayoutCreateRoute
+}
+
+const LayoutRouteChildren: LayoutRouteChildren = {
+  LayoutCreateRoute: LayoutCreateRoute,
+}
+
+const LayoutRouteWithChildren =
+  LayoutRoute._addFileChildren(LayoutRouteChildren)
 
 interface TasksTaskListRouteChildren {
   TasksTaskListCreateRoute: typeof TasksTaskListCreateRoute
@@ -263,27 +359,70 @@ const TasksRouteChildren: TasksRouteChildren = {
 
 const TasksRouteWithChildren = TasksRoute._addFileChildren(TasksRouteChildren)
 
+interface TestPathlessOnePathlessTwoRouteChildren {
+  TestPathlessOnePathlessTwoIndexRoute: typeof TestPathlessOnePathlessTwoIndexRoute
+}
+
+const TestPathlessOnePathlessTwoRouteChildren: TestPathlessOnePathlessTwoRouteChildren =
+  {
+    TestPathlessOnePathlessTwoIndexRoute: TestPathlessOnePathlessTwoIndexRoute,
+  }
+
+const TestPathlessOnePathlessTwoRouteWithChildren =
+  TestPathlessOnePathlessTwoRoute._addFileChildren(
+    TestPathlessOnePathlessTwoRouteChildren,
+  )
+
+interface TestPathlessOneRouteChildren {
+  TestPathlessOnePathlessTwoRoute: typeof TestPathlessOnePathlessTwoRouteWithChildren
+}
+
+const TestPathlessOneRouteChildren: TestPathlessOneRouteChildren = {
+  TestPathlessOnePathlessTwoRoute: TestPathlessOnePathlessTwoRouteWithChildren,
+}
+
+const TestPathlessOneRouteWithChildren = TestPathlessOneRoute._addFileChildren(
+  TestPathlessOneRouteChildren,
+)
+
+interface TestRouteChildren {
+  TestPathlessOneRoute: typeof TestPathlessOneRouteWithChildren
+}
+
+const TestRouteChildren: TestRouteChildren = {
+  TestPathlessOneRoute: TestPathlessOneRouteWithChildren,
+}
+
+const TestRouteWithChildren = TestRoute._addFileChildren(TestRouteChildren)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
+  '/layout': typeof LayoutRouteWithChildren
   '/properties': typeof PropertiesRoute
   '/files/$': typeof FilesSplatRoute
   '/files/create': typeof FilesCreateRoute
+  '/layout/create': typeof LayoutCreateRoute
   '/tasks': typeof TasksTaskListRouteWithChildren
+  '/test': typeof TestPathlessOnePathlessTwoRouteWithChildren
   '/tasks/$taskId': typeof TasksTaskIdTaskDetailRouteWithChildren
   '/tasks/create': typeof TasksTaskListCreateRoute
   '/tasks/': typeof TasksTaskListIndexRoute
   '/tasks/$taskId/edit': typeof TasksTaskIdTaskDetailEditRoute
   '/tasks/$taskId/': typeof TasksTaskIdTaskDetailIndexRoute
+  '/test/': typeof TestPathlessOnePathlessTwoIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
+  '/layout': typeof LayoutRouteWithChildren
   '/properties': typeof PropertiesRoute
   '/files/$': typeof FilesSplatRoute
   '/files/create': typeof FilesCreateRoute
+  '/layout/create': typeof LayoutCreateRoute
   '/tasks': typeof TasksTaskListIndexRoute
+  '/test': typeof TestPathlessOnePathlessTwoIndexRoute
   '/tasks/$taskId': typeof TasksTaskIdTaskDetailIndexRoute
   '/tasks/create': typeof TasksTaskListCreateRoute
   '/tasks/$taskId/edit': typeof TasksTaskIdTaskDetailEditRoute
@@ -293,17 +432,23 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
+  '/layout': typeof LayoutRouteWithChildren
   '/properties': typeof PropertiesRoute
   '/files/$': typeof FilesSplatRoute
   '/files/create': typeof FilesCreateRoute
+  '/layout/create': typeof LayoutCreateRoute
   '/tasks': typeof TasksRouteWithChildren
   '/tasks/_taskList': typeof TasksTaskListRouteWithChildren
+  '/test': typeof TestRouteWithChildren
+  '/test/_pathlessOne': typeof TestPathlessOneRouteWithChildren
   '/tasks/$taskId': typeof TasksTaskIdRouteWithChildren
   '/tasks/$taskId/_taskDetail': typeof TasksTaskIdTaskDetailRouteWithChildren
   '/tasks/_taskList/create': typeof TasksTaskListCreateRoute
+  '/test/_pathlessOne/_pathlessTwo': typeof TestPathlessOnePathlessTwoRouteWithChildren
   '/tasks/_taskList/': typeof TasksTaskListIndexRoute
   '/tasks/$taskId/_taskDetail/edit': typeof TasksTaskIdTaskDetailEditRoute
   '/tasks/$taskId/_taskDetail/': typeof TasksTaskIdTaskDetailIndexRoute
+  '/test/_pathlessOne/_pathlessTwo/': typeof TestPathlessOnePathlessTwoIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -311,23 +456,30 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/dashboard'
+    | '/layout'
     | '/properties'
     | '/files/$'
     | '/files/create'
+    | '/layout/create'
     | '/tasks'
+    | '/test'
     | '/tasks/$taskId'
     | '/tasks/create'
     | '/tasks/'
     | '/tasks/$taskId/edit'
     | '/tasks/$taskId/'
+    | '/test/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/dashboard'
+    | '/layout'
     | '/properties'
     | '/files/$'
     | '/files/create'
+    | '/layout/create'
     | '/tasks'
+    | '/test'
     | '/tasks/$taskId'
     | '/tasks/create'
     | '/tasks/$taskId/edit'
@@ -335,36 +487,46 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/dashboard'
+    | '/layout'
     | '/properties'
     | '/files/$'
     | '/files/create'
+    | '/layout/create'
     | '/tasks'
     | '/tasks/_taskList'
+    | '/test'
+    | '/test/_pathlessOne'
     | '/tasks/$taskId'
     | '/tasks/$taskId/_taskDetail'
     | '/tasks/_taskList/create'
+    | '/test/_pathlessOne/_pathlessTwo'
     | '/tasks/_taskList/'
     | '/tasks/$taskId/_taskDetail/edit'
     | '/tasks/$taskId/_taskDetail/'
+    | '/test/_pathlessOne/_pathlessTwo/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
+  LayoutRoute: typeof LayoutRouteWithChildren
   PropertiesRoute: typeof PropertiesRoute
   FilesSplatRoute: typeof FilesSplatRoute
   FilesCreateRoute: typeof FilesCreateRoute
   TasksRoute: typeof TasksRouteWithChildren
+  TestRoute: typeof TestRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
+  LayoutRoute: LayoutRouteWithChildren,
   PropertiesRoute: PropertiesRoute,
   FilesSplatRoute: FilesSplatRoute,
   FilesCreateRoute: FilesCreateRoute,
   TasksRoute: TasksRouteWithChildren,
+  TestRoute: TestRouteWithChildren,
 }
 
 export const routeTree = rootRoute
@@ -379,10 +541,12 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/dashboard",
+        "/layout",
         "/properties",
         "/files/$",
         "/files/create",
-        "/tasks"
+        "/tasks",
+        "/test"
       ]
     },
     "/": {
@@ -390,6 +554,12 @@ export const routeTree = rootRoute
     },
     "/dashboard": {
       "filePath": "dashboard.tsx"
+    },
+    "/layout": {
+      "filePath": "layout.tsx",
+      "children": [
+        "/layout/create"
+      ]
     },
     "/properties": {
       "filePath": "properties.tsx"
@@ -399,6 +569,10 @@ export const routeTree = rootRoute
     },
     "/files/create": {
       "filePath": "files/create.tsx"
+    },
+    "/layout/create": {
+      "filePath": "layout/create.tsx",
+      "parent": "/layout"
     },
     "/tasks": {
       "filePath": "tasks",
@@ -413,6 +587,19 @@ export const routeTree = rootRoute
       "children": [
         "/tasks/_taskList/create",
         "/tasks/_taskList/"
+      ]
+    },
+    "/test": {
+      "filePath": "test",
+      "children": [
+        "/test/_pathlessOne"
+      ]
+    },
+    "/test/_pathlessOne": {
+      "filePath": "test/_pathlessOne.tsx",
+      "parent": "/test",
+      "children": [
+        "/test/_pathlessOne/_pathlessTwo"
       ]
     },
     "/tasks/$taskId": {
@@ -434,6 +621,13 @@ export const routeTree = rootRoute
       "filePath": "tasks/_taskList/create.tsx",
       "parent": "/tasks/_taskList"
     },
+    "/test/_pathlessOne/_pathlessTwo": {
+      "filePath": "test/_pathlessOne/_pathlessTwo.tsx",
+      "parent": "/test/_pathlessOne",
+      "children": [
+        "/test/_pathlessOne/_pathlessTwo/"
+      ]
+    },
     "/tasks/_taskList/": {
       "filePath": "tasks/_taskList/index.tsx",
       "parent": "/tasks/_taskList"
@@ -445,6 +639,10 @@ export const routeTree = rootRoute
     "/tasks/$taskId/_taskDetail/": {
       "filePath": "tasks/$taskId/_taskDetail/index.tsx",
       "parent": "/tasks/$taskId/_taskDetail"
+    },
+    "/test/_pathlessOne/_pathlessTwo/": {
+      "filePath": "test/_pathlessOne/_pathlessTwo/index.tsx",
+      "parent": "/test/_pathlessOne/_pathlessTwo"
     }
   }
 }
