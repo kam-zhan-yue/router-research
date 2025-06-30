@@ -16,6 +16,7 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as PropertiesImport } from './routes/properties'
 import { Route as LayoutImport } from './routes/layout'
 import { Route as DashboardImport } from './routes/dashboard'
+import { Route as AuthenticationImport } from './routes/_authentication'
 import { Route as IndexImport } from './routes/index'
 import { Route as TestPathlessOneImport } from './routes/test/_pathlessOne'
 import { Route as TasksTaskListImport } from './routes/tasks/_taskList'
@@ -24,11 +25,14 @@ import { Route as FilesCreateImport } from './routes/files/create'
 import { Route as FilesSplatImport } from './routes/files/$'
 import { Route as TasksTaskListIndexImport } from './routes/tasks/_taskList/index'
 import { Route as TestPathlessOnePathlessTwoImport } from './routes/test/_pathlessOne/_pathlessTwo'
+import { Route as TasksTaskListListImport } from './routes/tasks/_taskList/list'
 import { Route as TasksTaskListCreateImport } from './routes/tasks/_taskList/create'
 import { Route as TasksTaskIdTaskDetailImport } from './routes/tasks/$taskId/_taskDetail'
 import { Route as TestPathlessOnePathlessTwoIndexImport } from './routes/test/_pathlessOne/_pathlessTwo/index'
 import { Route as TasksTaskIdTaskDetailIndexImport } from './routes/tasks/$taskId/_taskDetail/index'
 import { Route as TasksTaskIdTaskDetailEditImport } from './routes/tasks/$taskId/_taskDetail/edit'
+import { Route as DispatchesDispatchesUuidPublicImport } from './routes/dispatches.dispatches.$uuid.public'
+import { Route as AuthenticationDispatchesDispatchesIdImport } from './routes/_authentication/dispatches/dispatches/$id'
 
 // Create Virtual Routes
 
@@ -65,6 +69,11 @@ const LayoutRoute = LayoutImport.update({
 const DashboardRoute = DashboardImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AuthenticationRoute = AuthenticationImport.update({
+  id: '/_authentication',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -121,6 +130,12 @@ const TestPathlessOnePathlessTwoRoute = TestPathlessOnePathlessTwoImport.update(
   } as any,
 )
 
+const TasksTaskListListRoute = TasksTaskListListImport.update({
+  id: '/list',
+  path: '/list',
+  getParentRoute: () => TasksTaskListRoute,
+} as any)
+
 const TasksTaskListCreateRoute = TasksTaskListCreateImport.update({
   id: '/create',
   path: '/create',
@@ -153,6 +168,20 @@ const TasksTaskIdTaskDetailEditRoute = TasksTaskIdTaskDetailEditImport.update({
   getParentRoute: () => TasksTaskIdTaskDetailRoute,
 } as any)
 
+const DispatchesDispatchesUuidPublicRoute =
+  DispatchesDispatchesUuidPublicImport.update({
+    id: '/dispatches/dispatches/$uuid/public',
+    path: '/dispatches/dispatches/$uuid/public',
+    getParentRoute: () => rootRoute,
+  } as any)
+
+const AuthenticationDispatchesDispatchesIdRoute =
+  AuthenticationDispatchesDispatchesIdImport.update({
+    id: '/dispatches/dispatches/$id',
+    path: '/dispatches/dispatches/$id',
+    getParentRoute: () => AuthenticationRoute,
+  } as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -162,6 +191,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/_authentication': {
+      id: '/_authentication'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthenticationImport
       parentRoute: typeof rootRoute
     }
     '/dashboard': {
@@ -255,6 +291,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TasksTaskListCreateImport
       parentRoute: typeof TasksTaskListImport
     }
+    '/tasks/_taskList/list': {
+      id: '/tasks/_taskList/list'
+      path: '/list'
+      fullPath: '/tasks/list'
+      preLoaderRoute: typeof TasksTaskListListImport
+      parentRoute: typeof TasksTaskListImport
+    }
     '/test/_pathlessOne/_pathlessTwo': {
       id: '/test/_pathlessOne/_pathlessTwo'
       path: ''
@@ -268,6 +311,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/tasks/'
       preLoaderRoute: typeof TasksTaskListIndexImport
       parentRoute: typeof TasksTaskListImport
+    }
+    '/_authentication/dispatches/dispatches/$id': {
+      id: '/_authentication/dispatches/dispatches/$id'
+      path: '/dispatches/dispatches/$id'
+      fullPath: '/dispatches/dispatches/$id'
+      preLoaderRoute: typeof AuthenticationDispatchesDispatchesIdImport
+      parentRoute: typeof AuthenticationImport
+    }
+    '/dispatches/dispatches/$uuid/public': {
+      id: '/dispatches/dispatches/$uuid/public'
+      path: '/dispatches/dispatches/$uuid/public'
+      fullPath: '/dispatches/dispatches/$uuid/public'
+      preLoaderRoute: typeof DispatchesDispatchesUuidPublicImport
+      parentRoute: typeof rootRoute
     }
     '/tasks/$taskId/_taskDetail/edit': {
       id: '/tasks/$taskId/_taskDetail/edit'
@@ -295,6 +352,19 @@ declare module '@tanstack/react-router' {
 
 // Create and export the route tree
 
+interface AuthenticationRouteChildren {
+  AuthenticationDispatchesDispatchesIdRoute: typeof AuthenticationDispatchesDispatchesIdRoute
+}
+
+const AuthenticationRouteChildren: AuthenticationRouteChildren = {
+  AuthenticationDispatchesDispatchesIdRoute:
+    AuthenticationDispatchesDispatchesIdRoute,
+}
+
+const AuthenticationRouteWithChildren = AuthenticationRoute._addFileChildren(
+  AuthenticationRouteChildren,
+)
+
 interface LayoutRouteChildren {
   LayoutCreateRoute: typeof LayoutCreateRoute
 }
@@ -308,11 +378,13 @@ const LayoutRouteWithChildren =
 
 interface TasksTaskListRouteChildren {
   TasksTaskListCreateRoute: typeof TasksTaskListCreateRoute
+  TasksTaskListListRoute: typeof TasksTaskListListRoute
   TasksTaskListIndexRoute: typeof TasksTaskListIndexRoute
 }
 
 const TasksTaskListRouteChildren: TasksTaskListRouteChildren = {
   TasksTaskListCreateRoute: TasksTaskListCreateRoute,
+  TasksTaskListListRoute: TasksTaskListListRoute,
   TasksTaskListIndexRoute: TasksTaskListIndexRoute,
 }
 
@@ -397,6 +469,7 @@ const TestRouteWithChildren = TestRoute._addFileChildren(TestRouteChildren)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '': typeof AuthenticationRouteWithChildren
   '/dashboard': typeof DashboardRoute
   '/layout': typeof LayoutRouteWithChildren
   '/properties': typeof PropertiesRoute
@@ -407,7 +480,10 @@ export interface FileRoutesByFullPath {
   '/test': typeof TestPathlessOnePathlessTwoRouteWithChildren
   '/tasks/$taskId': typeof TasksTaskIdTaskDetailRouteWithChildren
   '/tasks/create': typeof TasksTaskListCreateRoute
+  '/tasks/list': typeof TasksTaskListListRoute
   '/tasks/': typeof TasksTaskListIndexRoute
+  '/dispatches/dispatches/$id': typeof AuthenticationDispatchesDispatchesIdRoute
+  '/dispatches/dispatches/$uuid/public': typeof DispatchesDispatchesUuidPublicRoute
   '/tasks/$taskId/edit': typeof TasksTaskIdTaskDetailEditRoute
   '/tasks/$taskId/': typeof TasksTaskIdTaskDetailIndexRoute
   '/test/': typeof TestPathlessOnePathlessTwoIndexRoute
@@ -415,6 +491,7 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '': typeof AuthenticationRouteWithChildren
   '/dashboard': typeof DashboardRoute
   '/layout': typeof LayoutRouteWithChildren
   '/properties': typeof PropertiesRoute
@@ -425,12 +502,16 @@ export interface FileRoutesByTo {
   '/test': typeof TestPathlessOnePathlessTwoIndexRoute
   '/tasks/$taskId': typeof TasksTaskIdTaskDetailIndexRoute
   '/tasks/create': typeof TasksTaskListCreateRoute
+  '/tasks/list': typeof TasksTaskListListRoute
+  '/dispatches/dispatches/$id': typeof AuthenticationDispatchesDispatchesIdRoute
+  '/dispatches/dispatches/$uuid/public': typeof DispatchesDispatchesUuidPublicRoute
   '/tasks/$taskId/edit': typeof TasksTaskIdTaskDetailEditRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/_authentication': typeof AuthenticationRouteWithChildren
   '/dashboard': typeof DashboardRoute
   '/layout': typeof LayoutRouteWithChildren
   '/properties': typeof PropertiesRoute
@@ -444,8 +525,11 @@ export interface FileRoutesById {
   '/tasks/$taskId': typeof TasksTaskIdRouteWithChildren
   '/tasks/$taskId/_taskDetail': typeof TasksTaskIdTaskDetailRouteWithChildren
   '/tasks/_taskList/create': typeof TasksTaskListCreateRoute
+  '/tasks/_taskList/list': typeof TasksTaskListListRoute
   '/test/_pathlessOne/_pathlessTwo': typeof TestPathlessOnePathlessTwoRouteWithChildren
   '/tasks/_taskList/': typeof TasksTaskListIndexRoute
+  '/_authentication/dispatches/dispatches/$id': typeof AuthenticationDispatchesDispatchesIdRoute
+  '/dispatches/dispatches/$uuid/public': typeof DispatchesDispatchesUuidPublicRoute
   '/tasks/$taskId/_taskDetail/edit': typeof TasksTaskIdTaskDetailEditRoute
   '/tasks/$taskId/_taskDetail/': typeof TasksTaskIdTaskDetailIndexRoute
   '/test/_pathlessOne/_pathlessTwo/': typeof TestPathlessOnePathlessTwoIndexRoute
@@ -455,6 +539,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | ''
     | '/dashboard'
     | '/layout'
     | '/properties'
@@ -465,13 +550,17 @@ export interface FileRouteTypes {
     | '/test'
     | '/tasks/$taskId'
     | '/tasks/create'
+    | '/tasks/list'
     | '/tasks/'
+    | '/dispatches/dispatches/$id'
+    | '/dispatches/dispatches/$uuid/public'
     | '/tasks/$taskId/edit'
     | '/tasks/$taskId/'
     | '/test/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | ''
     | '/dashboard'
     | '/layout'
     | '/properties'
@@ -482,10 +571,14 @@ export interface FileRouteTypes {
     | '/test'
     | '/tasks/$taskId'
     | '/tasks/create'
+    | '/tasks/list'
+    | '/dispatches/dispatches/$id'
+    | '/dispatches/dispatches/$uuid/public'
     | '/tasks/$taskId/edit'
   id:
     | '__root__'
     | '/'
+    | '/_authentication'
     | '/dashboard'
     | '/layout'
     | '/properties'
@@ -499,8 +592,11 @@ export interface FileRouteTypes {
     | '/tasks/$taskId'
     | '/tasks/$taskId/_taskDetail'
     | '/tasks/_taskList/create'
+    | '/tasks/_taskList/list'
     | '/test/_pathlessOne/_pathlessTwo'
     | '/tasks/_taskList/'
+    | '/_authentication/dispatches/dispatches/$id'
+    | '/dispatches/dispatches/$uuid/public'
     | '/tasks/$taskId/_taskDetail/edit'
     | '/tasks/$taskId/_taskDetail/'
     | '/test/_pathlessOne/_pathlessTwo/'
@@ -509,6 +605,7 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticationRoute: typeof AuthenticationRouteWithChildren
   DashboardRoute: typeof DashboardRoute
   LayoutRoute: typeof LayoutRouteWithChildren
   PropertiesRoute: typeof PropertiesRoute
@@ -516,10 +613,12 @@ export interface RootRouteChildren {
   FilesCreateRoute: typeof FilesCreateRoute
   TasksRoute: typeof TasksRouteWithChildren
   TestRoute: typeof TestRouteWithChildren
+  DispatchesDispatchesUuidPublicRoute: typeof DispatchesDispatchesUuidPublicRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticationRoute: AuthenticationRouteWithChildren,
   DashboardRoute: DashboardRoute,
   LayoutRoute: LayoutRouteWithChildren,
   PropertiesRoute: PropertiesRoute,
@@ -527,6 +626,7 @@ const rootRouteChildren: RootRouteChildren = {
   FilesCreateRoute: FilesCreateRoute,
   TasksRoute: TasksRouteWithChildren,
   TestRoute: TestRouteWithChildren,
+  DispatchesDispatchesUuidPublicRoute: DispatchesDispatchesUuidPublicRoute,
 }
 
 export const routeTree = rootRoute
@@ -540,17 +640,25 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/_authentication",
         "/dashboard",
         "/layout",
         "/properties",
         "/files/$",
         "/files/create",
         "/tasks",
-        "/test"
+        "/test",
+        "/dispatches/dispatches/$uuid/public"
       ]
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/_authentication": {
+      "filePath": "_authentication.tsx",
+      "children": [
+        "/_authentication/dispatches/dispatches/$id"
+      ]
     },
     "/dashboard": {
       "filePath": "dashboard.tsx"
@@ -586,6 +694,7 @@ export const routeTree = rootRoute
       "parent": "/tasks",
       "children": [
         "/tasks/_taskList/create",
+        "/tasks/_taskList/list",
         "/tasks/_taskList/"
       ]
     },
@@ -621,6 +730,10 @@ export const routeTree = rootRoute
       "filePath": "tasks/_taskList/create.tsx",
       "parent": "/tasks/_taskList"
     },
+    "/tasks/_taskList/list": {
+      "filePath": "tasks/_taskList/list.tsx",
+      "parent": "/tasks/_taskList"
+    },
     "/test/_pathlessOne/_pathlessTwo": {
       "filePath": "test/_pathlessOne/_pathlessTwo.tsx",
       "parent": "/test/_pathlessOne",
@@ -631,6 +744,13 @@ export const routeTree = rootRoute
     "/tasks/_taskList/": {
       "filePath": "tasks/_taskList/index.tsx",
       "parent": "/tasks/_taskList"
+    },
+    "/_authentication/dispatches/dispatches/$id": {
+      "filePath": "_authentication/dispatches/dispatches/$id.tsx",
+      "parent": "/_authentication"
+    },
+    "/dispatches/dispatches/$uuid/public": {
+      "filePath": "dispatches.dispatches.$uuid.public.tsx"
     },
     "/tasks/$taskId/_taskDetail/edit": {
       "filePath": "tasks/$taskId/_taskDetail/edit.tsx",
