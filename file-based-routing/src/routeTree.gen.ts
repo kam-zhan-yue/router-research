@@ -28,10 +28,13 @@ import { Route as TestPathlessOnePathlessTwoImport } from './routes/test/_pathle
 import { Route as TasksTaskListListImport } from './routes/tasks/_taskList/list'
 import { Route as TasksTaskListCreateImport } from './routes/tasks/_taskList/create'
 import { Route as TasksTaskIdTaskDetailImport } from './routes/tasks/$taskId/_taskDetail'
+import { Route as SuperuserTasksIdImport } from './routes/_superuser/tasks/$id'
+import { Route as CustomerTasksIdImport } from './routes/_customer/tasks/$id'
 import { Route as TestPathlessOnePathlessTwoIndexImport } from './routes/test/_pathlessOne/_pathlessTwo/index'
 import { Route as TasksTaskIdTaskDetailIndexImport } from './routes/tasks/$taskId/_taskDetail/index'
 import { Route as TasksTaskIdTaskDetailEditImport } from './routes/tasks/$taskId/_taskDetail/edit'
 import { Route as DispatchesDispatchesUuidPublicImport } from './routes/dispatches.dispatches.$uuid.public'
+import { Route as SuperuserTasksIdSecretImport } from './routes/_superuser/tasks/$id/secret'
 import { Route as AuthenticationDispatchesDispatchesIdImport } from './routes/_authentication/dispatches/dispatches/$id'
 
 // Create Virtual Routes
@@ -147,6 +150,18 @@ const TasksTaskIdTaskDetailRoute = TasksTaskIdTaskDetailImport.update({
   getParentRoute: () => TasksTaskIdRoute,
 } as any)
 
+const SuperuserTasksIdRoute = SuperuserTasksIdImport.update({
+  id: '/_superuser/tasks/$id',
+  path: '/tasks/$id',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const CustomerTasksIdRoute = CustomerTasksIdImport.update({
+  id: '/_customer/tasks/$id',
+  path: '/tasks/$id',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const TestPathlessOnePathlessTwoIndexRoute =
   TestPathlessOnePathlessTwoIndexImport.update({
     id: '/',
@@ -174,6 +189,12 @@ const DispatchesDispatchesUuidPublicRoute =
     path: '/dispatches/dispatches/$uuid/public',
     getParentRoute: () => rootRoute,
   } as any)
+
+const SuperuserTasksIdSecretRoute = SuperuserTasksIdSecretImport.update({
+  id: '/secret',
+  path: '/secret',
+  getParentRoute: () => SuperuserTasksIdRoute,
+} as any)
 
 const AuthenticationDispatchesDispatchesIdRoute =
   AuthenticationDispatchesDispatchesIdImport.update({
@@ -270,6 +291,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TestPathlessOneImport
       parentRoute: typeof TestRoute
     }
+    '/_customer/tasks/$id': {
+      id: '/_customer/tasks/$id'
+      path: '/tasks/$id'
+      fullPath: '/tasks/$id'
+      preLoaderRoute: typeof CustomerTasksIdImport
+      parentRoute: typeof rootRoute
+    }
+    '/_superuser/tasks/$id': {
+      id: '/_superuser/tasks/$id'
+      path: '/tasks/$id'
+      fullPath: '/tasks/$id'
+      preLoaderRoute: typeof SuperuserTasksIdImport
+      parentRoute: typeof rootRoute
+    }
     '/tasks/$taskId': {
       id: '/tasks/$taskId'
       path: '/$taskId'
@@ -318,6 +353,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/dispatches/dispatches/$id'
       preLoaderRoute: typeof AuthenticationDispatchesDispatchesIdImport
       parentRoute: typeof AuthenticationImport
+    }
+    '/_superuser/tasks/$id/secret': {
+      id: '/_superuser/tasks/$id/secret'
+      path: '/secret'
+      fullPath: '/tasks/$id/secret'
+      preLoaderRoute: typeof SuperuserTasksIdSecretImport
+      parentRoute: typeof SuperuserTasksIdImport
     }
     '/dispatches/dispatches/$uuid/public': {
       id: '/dispatches/dispatches/$uuid/public'
@@ -467,6 +509,17 @@ const TestRouteChildren: TestRouteChildren = {
 
 const TestRouteWithChildren = TestRoute._addFileChildren(TestRouteChildren)
 
+interface SuperuserTasksIdRouteChildren {
+  SuperuserTasksIdSecretRoute: typeof SuperuserTasksIdSecretRoute
+}
+
+const SuperuserTasksIdRouteChildren: SuperuserTasksIdRouteChildren = {
+  SuperuserTasksIdSecretRoute: SuperuserTasksIdSecretRoute,
+}
+
+const SuperuserTasksIdRouteWithChildren =
+  SuperuserTasksIdRoute._addFileChildren(SuperuserTasksIdRouteChildren)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '': typeof AuthenticationRouteWithChildren
@@ -478,11 +531,13 @@ export interface FileRoutesByFullPath {
   '/layout/create': typeof LayoutCreateRoute
   '/tasks': typeof TasksTaskListRouteWithChildren
   '/test': typeof TestPathlessOnePathlessTwoRouteWithChildren
+  '/tasks/$id': typeof SuperuserTasksIdRouteWithChildren
   '/tasks/$taskId': typeof TasksTaskIdTaskDetailRouteWithChildren
   '/tasks/create': typeof TasksTaskListCreateRoute
   '/tasks/list': typeof TasksTaskListListRoute
   '/tasks/': typeof TasksTaskListIndexRoute
   '/dispatches/dispatches/$id': typeof AuthenticationDispatchesDispatchesIdRoute
+  '/tasks/$id/secret': typeof SuperuserTasksIdSecretRoute
   '/dispatches/dispatches/$uuid/public': typeof DispatchesDispatchesUuidPublicRoute
   '/tasks/$taskId/edit': typeof TasksTaskIdTaskDetailEditRoute
   '/tasks/$taskId/': typeof TasksTaskIdTaskDetailIndexRoute
@@ -500,10 +555,12 @@ export interface FileRoutesByTo {
   '/layout/create': typeof LayoutCreateRoute
   '/tasks': typeof TasksTaskListIndexRoute
   '/test': typeof TestPathlessOnePathlessTwoIndexRoute
+  '/tasks/$id': typeof SuperuserTasksIdRouteWithChildren
   '/tasks/$taskId': typeof TasksTaskIdTaskDetailIndexRoute
   '/tasks/create': typeof TasksTaskListCreateRoute
   '/tasks/list': typeof TasksTaskListListRoute
   '/dispatches/dispatches/$id': typeof AuthenticationDispatchesDispatchesIdRoute
+  '/tasks/$id/secret': typeof SuperuserTasksIdSecretRoute
   '/dispatches/dispatches/$uuid/public': typeof DispatchesDispatchesUuidPublicRoute
   '/tasks/$taskId/edit': typeof TasksTaskIdTaskDetailEditRoute
 }
@@ -522,6 +579,8 @@ export interface FileRoutesById {
   '/tasks/_taskList': typeof TasksTaskListRouteWithChildren
   '/test': typeof TestRouteWithChildren
   '/test/_pathlessOne': typeof TestPathlessOneRouteWithChildren
+  '/_customer/tasks/$id': typeof CustomerTasksIdRoute
+  '/_superuser/tasks/$id': typeof SuperuserTasksIdRouteWithChildren
   '/tasks/$taskId': typeof TasksTaskIdRouteWithChildren
   '/tasks/$taskId/_taskDetail': typeof TasksTaskIdTaskDetailRouteWithChildren
   '/tasks/_taskList/create': typeof TasksTaskListCreateRoute
@@ -529,6 +588,7 @@ export interface FileRoutesById {
   '/test/_pathlessOne/_pathlessTwo': typeof TestPathlessOnePathlessTwoRouteWithChildren
   '/tasks/_taskList/': typeof TasksTaskListIndexRoute
   '/_authentication/dispatches/dispatches/$id': typeof AuthenticationDispatchesDispatchesIdRoute
+  '/_superuser/tasks/$id/secret': typeof SuperuserTasksIdSecretRoute
   '/dispatches/dispatches/$uuid/public': typeof DispatchesDispatchesUuidPublicRoute
   '/tasks/$taskId/_taskDetail/edit': typeof TasksTaskIdTaskDetailEditRoute
   '/tasks/$taskId/_taskDetail/': typeof TasksTaskIdTaskDetailIndexRoute
@@ -548,11 +608,13 @@ export interface FileRouteTypes {
     | '/layout/create'
     | '/tasks'
     | '/test'
+    | '/tasks/$id'
     | '/tasks/$taskId'
     | '/tasks/create'
     | '/tasks/list'
     | '/tasks/'
     | '/dispatches/dispatches/$id'
+    | '/tasks/$id/secret'
     | '/dispatches/dispatches/$uuid/public'
     | '/tasks/$taskId/edit'
     | '/tasks/$taskId/'
@@ -569,10 +631,12 @@ export interface FileRouteTypes {
     | '/layout/create'
     | '/tasks'
     | '/test'
+    | '/tasks/$id'
     | '/tasks/$taskId'
     | '/tasks/create'
     | '/tasks/list'
     | '/dispatches/dispatches/$id'
+    | '/tasks/$id/secret'
     | '/dispatches/dispatches/$uuid/public'
     | '/tasks/$taskId/edit'
   id:
@@ -589,6 +653,8 @@ export interface FileRouteTypes {
     | '/tasks/_taskList'
     | '/test'
     | '/test/_pathlessOne'
+    | '/_customer/tasks/$id'
+    | '/_superuser/tasks/$id'
     | '/tasks/$taskId'
     | '/tasks/$taskId/_taskDetail'
     | '/tasks/_taskList/create'
@@ -596,6 +662,7 @@ export interface FileRouteTypes {
     | '/test/_pathlessOne/_pathlessTwo'
     | '/tasks/_taskList/'
     | '/_authentication/dispatches/dispatches/$id'
+    | '/_superuser/tasks/$id/secret'
     | '/dispatches/dispatches/$uuid/public'
     | '/tasks/$taskId/_taskDetail/edit'
     | '/tasks/$taskId/_taskDetail/'
@@ -613,6 +680,8 @@ export interface RootRouteChildren {
   FilesCreateRoute: typeof FilesCreateRoute
   TasksRoute: typeof TasksRouteWithChildren
   TestRoute: typeof TestRouteWithChildren
+  CustomerTasksIdRoute: typeof CustomerTasksIdRoute
+  SuperuserTasksIdRoute: typeof SuperuserTasksIdRouteWithChildren
   DispatchesDispatchesUuidPublicRoute: typeof DispatchesDispatchesUuidPublicRoute
 }
 
@@ -626,6 +695,8 @@ const rootRouteChildren: RootRouteChildren = {
   FilesCreateRoute: FilesCreateRoute,
   TasksRoute: TasksRouteWithChildren,
   TestRoute: TestRouteWithChildren,
+  CustomerTasksIdRoute: CustomerTasksIdRoute,
+  SuperuserTasksIdRoute: SuperuserTasksIdRouteWithChildren,
   DispatchesDispatchesUuidPublicRoute: DispatchesDispatchesUuidPublicRoute,
 }
 
@@ -648,6 +719,8 @@ export const routeTree = rootRoute
         "/files/create",
         "/tasks",
         "/test",
+        "/_customer/tasks/$id",
+        "/_superuser/tasks/$id",
         "/dispatches/dispatches/$uuid/public"
       ]
     },
@@ -711,6 +784,15 @@ export const routeTree = rootRoute
         "/test/_pathlessOne/_pathlessTwo"
       ]
     },
+    "/_customer/tasks/$id": {
+      "filePath": "_customer/tasks/$id.tsx"
+    },
+    "/_superuser/tasks/$id": {
+      "filePath": "_superuser/tasks/$id.tsx",
+      "children": [
+        "/_superuser/tasks/$id/secret"
+      ]
+    },
     "/tasks/$taskId": {
       "filePath": "tasks/$taskId",
       "parent": "/tasks",
@@ -748,6 +830,10 @@ export const routeTree = rootRoute
     "/_authentication/dispatches/dispatches/$id": {
       "filePath": "_authentication/dispatches/dispatches/$id.tsx",
       "parent": "/_authentication"
+    },
+    "/_superuser/tasks/$id/secret": {
+      "filePath": "_superuser/tasks/$id/secret.tsx",
+      "parent": "/_superuser/tasks/$id"
     },
     "/dispatches/dispatches/$uuid/public": {
       "filePath": "dispatches.dispatches.$uuid.public.tsx"
