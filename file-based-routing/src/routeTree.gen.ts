@@ -13,6 +13,7 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as SearchImport } from './routes/search'
 import { Route as PropertiesImport } from './routes/properties'
 import { Route as LayoutImport } from './routes/layout'
 import { Route as DashboardImport } from './routes/dashboard'
@@ -28,7 +29,6 @@ import { Route as TestPathlessOnePathlessTwoImport } from './routes/test/_pathle
 import { Route as TasksTaskListListImport } from './routes/tasks/_taskList/list'
 import { Route as TasksTaskListCreateImport } from './routes/tasks/_taskList/create'
 import { Route as TasksTaskIdTaskDetailImport } from './routes/tasks/$taskId/_taskDetail'
-import { Route as SuperuserTasksIdImport } from './routes/_superuser/tasks/$id'
 import { Route as CustomerTasksIdImport } from './routes/_customer/tasks/$id'
 import { Route as TestPathlessOnePathlessTwoIndexImport } from './routes/test/_pathlessOne/_pathlessTwo/index'
 import { Route as TasksTaskIdTaskDetailIndexImport } from './routes/tasks/$taskId/_taskDetail/index'
@@ -54,6 +54,12 @@ const TestRoute = TestImport.update({
 const TasksRoute = TasksImport.update({
   id: '/tasks',
   path: '/tasks',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const SearchRoute = SearchImport.update({
+  id: '/search',
+  path: '/search',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -150,12 +156,6 @@ const TasksTaskIdTaskDetailRoute = TasksTaskIdTaskDetailImport.update({
   getParentRoute: () => TasksTaskIdRoute,
 } as any)
 
-const SuperuserTasksIdRoute = SuperuserTasksIdImport.update({
-  id: '/_superuser/tasks/$id',
-  path: '/tasks/$id',
-  getParentRoute: () => rootRoute,
-} as any)
-
 const CustomerTasksIdRoute = CustomerTasksIdImport.update({
   id: '/_customer/tasks/$id',
   path: '/tasks/$id',
@@ -191,9 +191,9 @@ const DispatchesDispatchesUuidPublicRoute =
   } as any)
 
 const SuperuserTasksIdSecretRoute = SuperuserTasksIdSecretImport.update({
-  id: '/secret',
-  path: '/secret',
-  getParentRoute: () => SuperuserTasksIdRoute,
+  id: '/_superuser/tasks/$id/secret',
+  path: '/tasks/$id/secret',
+  getParentRoute: () => rootRoute,
 } as any)
 
 const AuthenticationDispatchesDispatchesIdRoute =
@@ -240,6 +240,13 @@ declare module '@tanstack/react-router' {
       path: '/properties'
       fullPath: '/properties'
       preLoaderRoute: typeof PropertiesImport
+      parentRoute: typeof rootRoute
+    }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchImport
       parentRoute: typeof rootRoute
     }
     '/files/$': {
@@ -298,13 +305,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CustomerTasksIdImport
       parentRoute: typeof rootRoute
     }
-    '/_superuser/tasks/$id': {
-      id: '/_superuser/tasks/$id'
-      path: '/tasks/$id'
-      fullPath: '/tasks/$id'
-      preLoaderRoute: typeof SuperuserTasksIdImport
-      parentRoute: typeof rootRoute
-    }
     '/tasks/$taskId': {
       id: '/tasks/$taskId'
       path: '/$taskId'
@@ -356,10 +356,10 @@ declare module '@tanstack/react-router' {
     }
     '/_superuser/tasks/$id/secret': {
       id: '/_superuser/tasks/$id/secret'
-      path: '/secret'
+      path: '/tasks/$id/secret'
       fullPath: '/tasks/$id/secret'
       preLoaderRoute: typeof SuperuserTasksIdSecretImport
-      parentRoute: typeof SuperuserTasksIdImport
+      parentRoute: typeof rootRoute
     }
     '/dispatches/dispatches/$uuid/public': {
       id: '/dispatches/dispatches/$uuid/public'
@@ -509,29 +509,19 @@ const TestRouteChildren: TestRouteChildren = {
 
 const TestRouteWithChildren = TestRoute._addFileChildren(TestRouteChildren)
 
-interface SuperuserTasksIdRouteChildren {
-  SuperuserTasksIdSecretRoute: typeof SuperuserTasksIdSecretRoute
-}
-
-const SuperuserTasksIdRouteChildren: SuperuserTasksIdRouteChildren = {
-  SuperuserTasksIdSecretRoute: SuperuserTasksIdSecretRoute,
-}
-
-const SuperuserTasksIdRouteWithChildren =
-  SuperuserTasksIdRoute._addFileChildren(SuperuserTasksIdRouteChildren)
-
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '': typeof AuthenticationRouteWithChildren
   '/dashboard': typeof DashboardRoute
   '/layout': typeof LayoutRouteWithChildren
   '/properties': typeof PropertiesRoute
+  '/search': typeof SearchRoute
   '/files/$': typeof FilesSplatRoute
   '/files/create': typeof FilesCreateRoute
   '/layout/create': typeof LayoutCreateRoute
   '/tasks': typeof TasksTaskListRouteWithChildren
   '/test': typeof TestPathlessOnePathlessTwoRouteWithChildren
-  '/tasks/$id': typeof SuperuserTasksIdRouteWithChildren
+  '/tasks/$id': typeof CustomerTasksIdRoute
   '/tasks/$taskId': typeof TasksTaskIdTaskDetailRouteWithChildren
   '/tasks/create': typeof TasksTaskListCreateRoute
   '/tasks/list': typeof TasksTaskListListRoute
@@ -550,12 +540,13 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/layout': typeof LayoutRouteWithChildren
   '/properties': typeof PropertiesRoute
+  '/search': typeof SearchRoute
   '/files/$': typeof FilesSplatRoute
   '/files/create': typeof FilesCreateRoute
   '/layout/create': typeof LayoutCreateRoute
   '/tasks': typeof TasksTaskListIndexRoute
   '/test': typeof TestPathlessOnePathlessTwoIndexRoute
-  '/tasks/$id': typeof SuperuserTasksIdRouteWithChildren
+  '/tasks/$id': typeof CustomerTasksIdRoute
   '/tasks/$taskId': typeof TasksTaskIdTaskDetailIndexRoute
   '/tasks/create': typeof TasksTaskListCreateRoute
   '/tasks/list': typeof TasksTaskListListRoute
@@ -572,6 +563,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/layout': typeof LayoutRouteWithChildren
   '/properties': typeof PropertiesRoute
+  '/search': typeof SearchRoute
   '/files/$': typeof FilesSplatRoute
   '/files/create': typeof FilesCreateRoute
   '/layout/create': typeof LayoutCreateRoute
@@ -580,7 +572,6 @@ export interface FileRoutesById {
   '/test': typeof TestRouteWithChildren
   '/test/_pathlessOne': typeof TestPathlessOneRouteWithChildren
   '/_customer/tasks/$id': typeof CustomerTasksIdRoute
-  '/_superuser/tasks/$id': typeof SuperuserTasksIdRouteWithChildren
   '/tasks/$taskId': typeof TasksTaskIdRouteWithChildren
   '/tasks/$taskId/_taskDetail': typeof TasksTaskIdTaskDetailRouteWithChildren
   '/tasks/_taskList/create': typeof TasksTaskListCreateRoute
@@ -603,6 +594,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/layout'
     | '/properties'
+    | '/search'
     | '/files/$'
     | '/files/create'
     | '/layout/create'
@@ -626,6 +618,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/layout'
     | '/properties'
+    | '/search'
     | '/files/$'
     | '/files/create'
     | '/layout/create'
@@ -646,6 +639,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/layout'
     | '/properties'
+    | '/search'
     | '/files/$'
     | '/files/create'
     | '/layout/create'
@@ -654,7 +648,6 @@ export interface FileRouteTypes {
     | '/test'
     | '/test/_pathlessOne'
     | '/_customer/tasks/$id'
-    | '/_superuser/tasks/$id'
     | '/tasks/$taskId'
     | '/tasks/$taskId/_taskDetail'
     | '/tasks/_taskList/create'
@@ -676,12 +669,13 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   LayoutRoute: typeof LayoutRouteWithChildren
   PropertiesRoute: typeof PropertiesRoute
+  SearchRoute: typeof SearchRoute
   FilesSplatRoute: typeof FilesSplatRoute
   FilesCreateRoute: typeof FilesCreateRoute
   TasksRoute: typeof TasksRouteWithChildren
   TestRoute: typeof TestRouteWithChildren
   CustomerTasksIdRoute: typeof CustomerTasksIdRoute
-  SuperuserTasksIdRoute: typeof SuperuserTasksIdRouteWithChildren
+  SuperuserTasksIdSecretRoute: typeof SuperuserTasksIdSecretRoute
   DispatchesDispatchesUuidPublicRoute: typeof DispatchesDispatchesUuidPublicRoute
 }
 
@@ -691,12 +685,13 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   LayoutRoute: LayoutRouteWithChildren,
   PropertiesRoute: PropertiesRoute,
+  SearchRoute: SearchRoute,
   FilesSplatRoute: FilesSplatRoute,
   FilesCreateRoute: FilesCreateRoute,
   TasksRoute: TasksRouteWithChildren,
   TestRoute: TestRouteWithChildren,
   CustomerTasksIdRoute: CustomerTasksIdRoute,
-  SuperuserTasksIdRoute: SuperuserTasksIdRouteWithChildren,
+  SuperuserTasksIdSecretRoute: SuperuserTasksIdSecretRoute,
   DispatchesDispatchesUuidPublicRoute: DispatchesDispatchesUuidPublicRoute,
 }
 
@@ -715,12 +710,13 @@ export const routeTree = rootRoute
         "/dashboard",
         "/layout",
         "/properties",
+        "/search",
         "/files/$",
         "/files/create",
         "/tasks",
         "/test",
         "/_customer/tasks/$id",
-        "/_superuser/tasks/$id",
+        "/_superuser/tasks/$id/secret",
         "/dispatches/dispatches/$uuid/public"
       ]
     },
@@ -744,6 +740,9 @@ export const routeTree = rootRoute
     },
     "/properties": {
       "filePath": "properties.tsx"
+    },
+    "/search": {
+      "filePath": "search.tsx"
     },
     "/files/$": {
       "filePath": "files/$.tsx"
@@ -787,12 +786,6 @@ export const routeTree = rootRoute
     "/_customer/tasks/$id": {
       "filePath": "_customer/tasks/$id.tsx"
     },
-    "/_superuser/tasks/$id": {
-      "filePath": "_superuser/tasks/$id.tsx",
-      "children": [
-        "/_superuser/tasks/$id/secret"
-      ]
-    },
     "/tasks/$taskId": {
       "filePath": "tasks/$taskId",
       "parent": "/tasks",
@@ -832,8 +825,7 @@ export const routeTree = rootRoute
       "parent": "/_authentication"
     },
     "/_superuser/tasks/$id/secret": {
-      "filePath": "_superuser/tasks/$id/secret.tsx",
-      "parent": "/_superuser/tasks/$id"
+      "filePath": "_superuser/tasks/$id/secret.tsx"
     },
     "/dispatches/dispatches/$uuid/public": {
       "filePath": "dispatches.dispatches.$uuid.public.tsx"
